@@ -1,3 +1,4 @@
+const { log } = require('console');
 const express = require('express');
 const app = express();
 const http = require('http');
@@ -10,7 +11,19 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  console.log('a user connected',socket.id);
+
+  socket.emit('SEVER_SEND_SOCKET_ID', socket.id);
+
+
+  socket.on("CLINET_SEND_MESS", (data) => {
+
+    // khi A gửi data lên server, server chỉ trả về cho A
+    // socket.emit('SEVER_RETURN_MESS', data);
+
+    // khi A gửi data lên server, server  trả về cho A, B, C, ....
+    io.emit('SEVER_RETURN_MESS', data);
+  });
 });
 
 server.listen(3000, () => {
